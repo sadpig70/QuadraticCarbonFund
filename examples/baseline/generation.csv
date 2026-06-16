@@ -1,0 +1,7 @@
+hour,source,mwh
+1,solar,30
+1,wind,30
+1,gas,40
+2,solar,35
+2,wind,35
+2,gas,40

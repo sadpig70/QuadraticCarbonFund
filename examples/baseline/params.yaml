@@ -1,0 +1,4 @@
+matching_pool: 10000
+per_project_cap: 1000
+total_matching_pool: 10000
+offset_factor: 0.1

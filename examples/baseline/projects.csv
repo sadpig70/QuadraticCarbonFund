@@ -1,0 +1,5 @@
+project_id,name,location,claimed_tco2,generation_mwh,offset_mwh
+P001,Community Solar Alpha,North,120.0,500.0,50.0
+P002,Wind Co-op Beta,West,80.0,300.0,20.0
+P003,Microgrid Gamma,South,10.0,10.0,5.0
+P004,Efficiency Retrofit Delta,East,200.0,400.0,0.0

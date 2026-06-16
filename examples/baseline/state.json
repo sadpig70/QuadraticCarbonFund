@@ -1,0 +1,73 @@
+{
+  "run_id": "14b2faefde286937",
+  "verdict": "capped",
+  "matching_pool": 10000.0,
+  "projects": [
+    {
+      "project_id": "P001",
+      "name": "Community Solar Alpha",
+      "location": "North",
+      "verdict": "capped",
+      "claimed_tco2": 120.0,
+      "verified_tco2": 120.0,
+      "boost": 1.2,
+      "match": 1000.0,
+      "capped": true,
+      "reasons": [
+        "verified reduction 120.00 tCO2 (claim 120.00)",
+        "match capped by policy"
+      ]
+    },
+    {
+      "project_id": "P002",
+      "name": "Wind Co-op Beta",
+      "location": "West",
+      "verdict": "matched",
+      "claimed_tco2": 80.0,
+      "verified_tco2": 80.0,
+      "boost": 1.0,
+      "match": 649.848589,
+      "capped": false,
+      "reasons": [
+        "verified reduction 80.00 tCO2 (claim 80.00)"
+      ]
+    },
+    {
+      "project_id": "P003",
+      "name": "Microgrid Gamma",
+      "location": "South",
+      "verdict": "eligible",
+      "claimed_tco2": 10.0,
+      "verified_tco2": 4.0,
+      "boost": 1.0,
+      "match": 0.0,
+      "capped": false,
+      "reasons": [
+        "not verified: reduction 4.00 is insufficient vs claim 10.00"
+      ]
+    },
+    {
+      "project_id": "P004",
+      "name": "Efficiency Retrofit Delta",
+      "location": "East",
+      "verdict": "capped",
+      "claimed_tco2": 200.0,
+      "verified_tco2": 200.0,
+      "boost": 1.0,
+      "match": 1000.0,
+      "capped": true,
+      "reasons": [
+        "verified reduction 200.00 tCO2 (claim 200.00)",
+        "match capped by policy"
+      ]
+    }
+  ],
+  "reasons": [
+    "P001: verified reduction 120.00 tCO2 (claim 120.00)",
+    "P001: match capped by policy",
+    "P002: verified reduction 80.00 tCO2 (claim 80.00)",
+    "P003: not verified: reduction 4.00 is insufficient vs claim 10.00",
+    "P004: verified reduction 200.00 tCO2 (claim 200.00)",
+    "P004: match capped by policy"
+  ]
+}
