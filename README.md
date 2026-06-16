@@ -1,3 +1,5 @@
+![QuadraticCarbonFund](assets/QuadraticCarbonFund_hero.png)
+
 # QuadraticCarbonFund
 
 > Allocate a carbon-credit matching pool to community projects using verifiable emission reductions and quadratic funding weights.
