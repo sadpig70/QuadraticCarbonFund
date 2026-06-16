@@ -1,0 +1,3 @@
+project_id,name,location,claimed_tco2,generation_mwh,offset_mwh
+P001,Community Solar Alpha,North,100,500,0
+P002,Wind Co-op Beta,West,80,400,0

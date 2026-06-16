@@ -154,5 +154,79 @@ class TestEndToEnd(unittest.TestCase):
         self.assertFalse(result["valid"])
 
 
+class TestEngineUnits(unittest.TestCase):
+    """Pure-function unit tests (no scenario dir needed)."""
+
+    def test_verify_project_eligible_when_insufficient(self):
+        p = {"project_id": "P", "name": "n", "location": "L",
+             "emission_reduction": 10.0, "claimed_tco2": 100.0}
+        self.assertEqual(qcf.verify_project(p), "eligible")
+
+    def test_verify_project_verified_when_sufficient(self):
+        p = {"project_id": "P", "name": "n", "location": "L",
+             "emission_reduction": 80.0, "claimed_tco2": 100.0}
+        self.assertEqual(qcf.verify_project(p), "verified")
+
+    def test_compute_emission_reduction_capped_at_claim(self):
+        p = {"location": "North", "generation_mwh": 500.0, "offset_mwh": 50.0, "claimed_tco2": 120.0}
+        scen = {"emission_factor": [{"location": "North", "factor": "0.35"}],
+                "params": {"offset_factor": 0.1}}
+        # 500*0.35 - 50*0.1 = 170 -> min(claim 120, 170) = 120
+        self.assertEqual(qcf.compute_emission_reduction(p, scen), 120.0)
+
+    def test_emission_factor_default_fallback(self):
+        table = [{"location": "default", "factor": "0.5"}]
+        self.assertEqual(qcf.lookup_emission_factor("Unknown", table), 0.5)
+
+    def test_qf_allocation_single_verified_takes_full_pool(self):
+        state = {"scenario": {"params": {"matching_pool": 1000.0}},
+                 "projects": [{"verdict": "verified", "emission_reduction": 100.0, "boost": 1.0}]}
+        qcf.compute_qf_allocation(state)
+        self.assertAlmostEqual(state["projects"][0]["raw_match"], 1000.0)
+
+    def test_apply_caps_per_project(self):
+        state = {"scenario": {"params": {"per_project_cap": 500.0}},
+                 "projects": [{"raw_match": 1000.0, "verdict": "verified"}]}
+        qcf.apply_caps(state)
+        p = state["projects"][0]
+        self.assertTrue(p["capped"])
+        self.assertEqual(p["match"], 500.0)
+        self.assertEqual(p["verdict"], "capped")
+
+    def test_overall_verdict_precedence(self):
+        self.assertEqual(qcf.overall_verdict([{"verdict": "matched"}, {"verdict": "capped"}]), "capped")
+        self.assertEqual(qcf.overall_verdict([{"verdict": "matched"}, {"verdict": "eligible"}]), "matched")
+        self.assertEqual(qcf.overall_verdict([{"verdict": "eligible"}]), "eligible")
+
+    def test_reasons_for_capped_includes_policy(self):
+        p = {"verdict": "capped", "emission_reduction": 100.0, "claimed_tco2": 120.0, "capped": True}
+        reasons = qcf.reasons_for(p)
+        self.assertTrue(any("verified reduction" in r for r in reasons))
+        self.assertTrue(any("capped by policy" in r for r in reasons))
+
+
+class TestScenarioVerdicts(unittest.TestCase):
+    """End-to-end verdict coverage on the shipped example scenarios."""
+
+    def _run_copy(self, src):
+        tmp = tempfile.mkdtemp()
+        dst = os.path.join(tmp, "scn")
+        shutil.copytree(src, dst)
+        try:
+            state = qcf.output_layer(qcf.allocation_layer(
+                qcf.verification_layer(qcf.input_layer(dst))))
+            return state["output"]["verdict"]
+        finally:
+            shutil.rmtree(tmp)
+
+    def test_example_matched(self):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.assertEqual(self._run_copy(os.path.join(root, "examples", "matched")), "matched")
+
+    def test_example_eligible(self):
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        self.assertEqual(self._run_copy(os.path.join(root, "examples", "eligible")), "eligible")
+
+
 if __name__ == "__main__":
     unittest.main()
